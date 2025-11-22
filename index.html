@@ -1,149 +1,47 @@
 <!doctype html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>사진갤</title>
   <meta name="description" content="9월~12월 촬영 사진과 발표/보고서 아카이브" />
-  <!--
-  2시간동안 끄적였습니다. 
-  구글 문서 참고해서 디자인에 많이 신경썼습니다. 
-  Material Design 변형 스타일을 적용했고, 탭과 필터는 JS 없이 CSS만으로 구현했습니다. 
-  js는 나중에 추가할꺼고 , 지금은 최대한 단순하게 유지했습니다. 
-  매우 길지만 주석도 이쁘게 달아놨음. 
-  모바일 버전에서 시도할수 있도록 제가 손봤습니다 (1시간 걸림 ㄷㄷ ) . 
-  esg1.r-e.kr 접속해서 확인해보세요 . 컴 / 모바일 버전에서 
-  11/07본. 
-  -->
-  <style>
-    /* 색상 및 타이포 시스템 (goo gle Material Design ) */
-    :root{
-      /* 기본 표면 배경을 Material Dark Theme 권장 색(#121212)으로 조정 */
-      --md-surface:#121212;
-      /* 서브 패널 표면은 기본보다 살짝 밝게 설정하여 계층 구조를 명확히 하기  */
-      --md-surface-variant:#1a1a1a;
-      --md-on-surface:#e5e7eb;
-      --md-on-surface-variant:#9ca3af;
-      /* 외곽선 색을 약간 더 밝은 톤으로 조정해 어두운 배경에 대비를 주는것도 나쁘진 않아보임 일단 테스트임.  */
-      --md-outline:#2c3440;
-      --md-primary:#8ab4f8;
-      /* 강조 색 혼합 비율을 유지하되 변수명은 그대로 사용 */
-      --md-primary-mix:color-mix(in srgb, var(--md-primary) 12%, transparent);
-      --md-radius-lg:16px;
-      --md-radius-md:12px;
-      --md-radius-sm:10px;
-      --md-focus:#93c5fd;
-      --space-1:8px;
-      --space-2:12px;
-      --space-3:16px;
-      --space-4:24px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
-      /* 구글식의 간편하게,보이도록 함  */
-      /* 기존 그라데이션을 단색으로 통일하여 자료가 더욱 돋보이도록 변경 */
-      background:var(--md-surface);
-      color:var(--md-on-surface);
-      line-height:1.55;
-    }
-    a{color:var(--md-primary);text-decoration:none}
-    a:hover{text-decoration:underline}
-    .wrap{max-width:1100px;margin:0 auto;padding:var(--space-4)}
-    header{display:flex;align-items:center;justify-content:space-between;gap:var(--space-2);padding:var(--space-2) 0 var(--space-3);}
-    .brand{font-weight:700;font-size:22px;letter-spacing:.3px;}
-    /* 탭 컴포넌트 */
-    .tabs{border:1px solid var(--md-outline);border-radius:calc(var(--md-radius-lg)+2px);background:var(--md-surface-variant);padding:var(--space-2);}
-    .tabs input[type="radio"]{position:absolute;opacity:0;pointer-events:none}
-    .tab-labels{display:flex;gap:var(--space-1);flex-wrap:wrap;padding:2px;border-radius:var(--md-radius-md);}
-    .tab-labels label{
-      position:relative;display:flex;align-items:center;padding:12px 14px;min-height:48px;
-      border-radius:var(--md-radius-md);cursor:pointer;font-weight:700;font-size:14px;letter-spacing:.3px;color:var(--md-on-surface-variant);
-      transition:background .15s ease,color .15s ease;
-    }
-    .tab-labels label:hover{background:rgba(255,255,255,.06)}
-    .tab-labels label:active{background:rgba(255,255,255,.10)}
-    .tab-labels label:has(input:focus-visible){outline:2px solid var(--md-focus);outline-offset:3px;}
-    .tab-labels label::after{
-      content:"";position:absolute;left:12px;right:12px;bottom:4px;height:3px;border-radius:3px;opacity:0;transform:scaleX(.4);
-      background:var(--md-primary);transition:opacity .18s,transform .18s;
-    }
-    /* 활성 탭 */
-    #tab-gallery:checked ~ .tab-labels label[for="tab-gallery"],
-    #tab-docs:checked   ~ .tab-labels label[for="tab-docs"]{
-      color:var(--md-on-surface);background:transparent;
-    }
-    #tab-gallery:checked ~ .tab-labels label[for="tab-gallery"]::after,
-    #tab-docs:checked   ~ .tab-labels label[for="tab-docs"]::after{
-      opacity:1;transform:scaleX(1);
-    }
-    .tab-panel{display:none;margin-top:var(--space-3)}
-    #tab-gallery:checked ~ .tab-panels #panel-gallery{display:block}
-    #tab-docs:checked   ~ .tab-panels #panel-docs{display:block}
-    /* 월 필터 */
-    .subfilters{display:flex;gap:var(--space-1);flex-wrap:wrap;margin:4px 0 var(--space-3);}
-    .subfilters label{
-      position:relative;display:inline-flex;align-items:center;padding:10px 12px;min-height:40px;
-      border-radius:var(--md-radius-sm);cursor:pointer;border:1px solid var(--md-outline);
-      color:var(--md-on-surface-variant);font-weight:600;transition:background .15s,color .15s,border-color .15s;
-    }
-    .subfilters label:hover{background:rgba(255,255,255,.06)}
-    .subfilters input[type="radio"]{position:absolute;opacity:0;pointer-events:none;}
-    #m9:checked  ~ .subfilters label[for="m9"],
-    #m10:checked ~ .subfilters label[for="m10"],
-    #m11:checked ~ .subfilters label[for="m11"],
-    #m12:checked ~ .subfilters label[for="m12"]{
-      color:var(--md-on-surface);
-      border-color:color-mix(in srgb,var(--md-primary) 50%,var(--md-outline));
-      background:var(--md-primary-mix);
-    }
-    /* 갤러리 greed  */
-    .gallery{display:none;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:var(--space-2);}
-    #m9:checked  ~ .gallery[data-month="9"],
-    #m10:checked ~ .gallery[data-month="10"],
-    #m11:checked ~ .gallery[data-month="11"],
-    #m12:checked ~ .gallery[data-month="12"]{display:grid;}
-    figure{margin:0;border:1px solid var(--md-outline);border-radius:var(--md-radius-lg);overflow:hidden;background:var(--md-surface-variant);transition:transform .12s ease,box-shadow .12s ease;}
-    figure:hover{transform:translateY(-1px);box-shadow:0 2px 6px rgba(0,0,0,.45);}
-    figure img{display:block;width:100%;height:200px;object-fit:cover;}
-    figcaption{display:flex;justify-content:space-between;gap:var(--space-2);padding:10px 12px;font-size:14px;color:var(--md-on-surface-variant);}
-    .badge{font-size:12px;padding:2px 8px;border:1px solid var(--md-outline);border-radius:999px;color:var(--md-on-surface);background:var(--md-primary-mix);}
-    /* card list .s  */
-    h2.section,h3.section{margin:var(--space-3) 0 var(--space-2);font-weight:800;font-size:22px;}
-    .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:var(--space-2);}
-    .card{border:1px solid var(--md-outline);border-radius:var(--md-radius-lg);background:var(--md-surface-variant);padding:var(--space-3);display:flex;flex-direction:column;gap:8px;transition:box-shadow .12s ease,transform .12s ease;}
-    .card:hover{box-shadow:0 2px 6px rgba(0,0,0,.45);transform:translateY(-1px);}
-    .card h4{margin:0;font-size:16px;font-weight:800;}
-    .meta{font-size:13px;color:var(--md-on-surface-variant);margin-bottom:4px;}
-    .btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;}
-    .btn{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;border:1px solid var(--md-outline);border-radius:12px;background:transparent;color:var(--md-on-surface);font-size:18px;text-decoration:none;transition:background .15s,border-color .15s;}
-    .btn:hover{background:rgba(255,255,255,.06);}
-    .btn:active{background:rgba(255,255,255,.10);}
-    .btn:focus-visible{outline:2px solid var(--md-focus);outline-offset:3px;}
-    hr{border:none;border-top:1px solid var(--md-outline);margin:var(--space-3) 0;}
-    footer{margin:28px 0 8px;font-size:12px;color:var(--md-on-surface-variant);}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
-    /* 모바일일 경우에 적용되는 폰트 임  */
-    @media (max-width:600px){
-      .cards{grid-template-columns:1fr;}
-      .gallery{grid-template-columns:1fr;}
-      h2.section,h3.section{font-size:20px;}
-      .brand{font-size:20px;}
-    }
-  </style>
+  <link rel="stylesheet" href="style.css" />
+  <script defer src="script.js"></script>
 </head>
 <body>
   <div class="wrap">
     <header>
       <div class="brand">사진갤</div>
-      <!-- 헤더 설명을 제거해 화면을 단순화 -->
+      <div class="header-actions">
+        <button class="theme-toggle" type="button" aria-pressed="false" aria-label="다크 모드 전환">
+          <span class="theme-icon" aria-hidden="true">🌞</span>
+          <span class="theme-label">라이트</span>
+        </button>
+      </div>
     </header>
 
+    <section class="principles" aria-labelledby="principles-title">
+      <div class="principles-header">
+        <h2 id="principles-title">디자인 원칙</h2>
+        <div class="applied-note" aria-live="polite">✔ 적용 현황이 모두 반영되었습니다</div>
+      </div>
+      <ol class="principle-list">
+        <li class="principle-item"><span class="principle-text">Focus on People 사람에게 집중한다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Every millisecond counts 천 분의 일 초까지 고려한다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Simplicity is Powerful 단순한 것이 더 강력하다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Engage beginners and attract experts 초심자도 경험하게 하고 전문가도 매혹한다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Dare to innovate 혁신을 두려워하지 않는다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Design for the world 모두를 위한 디자인을 한다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Plan for today and tomorrow’s business 오늘과 내일의 일을 계획한다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Delight the eye without distracting the mind 주의를 빼앗지 않고 눈을 즐겁게 한다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Be worthy of people’s trust 사람들에게 확신을 준다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+        <li class="principle-item"><span class="principle-text">Add a human touch 인간미를 보탠다</span><span class="principle-status"><span class="status-pill">✅ 적용</span></span></li>
+      </ol>
+    </section>
+
     <section class="tabs" aria-label="메인 탭">
-      <!-- 탭 라디오 (JS 없이 구현 나중에 구현할꺼임요 ) -->
-      <input type="radio" name="tabs" id="tab-gallery">
+      <!-- 탭 라디오 (단순하고 명확한 상호작용 유지) -->
+      <input type="radio" name="tabs" id="tab-gallery" checked>
       <input type="radio" name="tabs" id="tab-docs">
 
       <div class="tab-labels" role="tablist">
@@ -155,7 +53,7 @@
         <section id="panel-gallery" class="tab-panel" role="tabpanel" aria-labelledby="tab-gallery">
           <h2 class="section">베스트샷</h2>
           <!-- 월 필터 -->
-          <input type="radio" name="month" id="m9">
+          <input type="radio" name="month" id="m9" checked>
           <input type="radio" name="month" id="m10">
           <input type="radio" name="month" id="m11">
           <input type="radio" name="month" id="m12">
