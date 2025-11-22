@@ -41,6 +41,8 @@ window.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.querySelector(".theme-toggle");
   const themeLabel = document.querySelector(".theme-label");
   const themeIcon = document.querySelector(".theme-icon");
+  const principleItems = Array.from(document.querySelectorAll(".principle-item"));
+  const appliedNote = document.querySelector(".applied-note");
 
   const syncTabs = () => syncSelection(tabInputs, tabLabels);
   const syncMonths = () => syncSelection(monthInputs, monthLabels);
@@ -53,6 +55,7 @@ window.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem(THEME_KEY, next);
     const isDark = next === "dark";
     themeToggle?.setAttribute("aria-pressed", isDark ? "true" : "false");
+    themeToggle?.setAttribute("aria-label", isDark ? "라이트 모드로 전환" : "다크 모드로 전환");
     if (themeLabel) themeLabel.textContent = isDark ? "다크" : "라이트";
     if (themeIcon) themeIcon.textContent = isDark ? "🌙" : "🌞";
   };
@@ -73,6 +76,11 @@ window.addEventListener("DOMContentLoaded", () => {
 
   enableArrowNavigation(tabInputs, tabLabels);
   enableArrowNavigation(monthInputs, monthLabels);
+
+  if (appliedNote && principleItems.length) {
+    const appliedCount = document.querySelectorAll(".status-pill[data-status='applied']").length;
+    appliedNote.textContent = `✔ ${appliedCount}/${principleItems.length} 디자인 원칙 적용됨`;
+  }
 
   syncTabs();
   syncMonths();

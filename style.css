@@ -167,8 +167,8 @@ a:hover { text-decoration:underline; }
   gap:6px;
   padding:6px 10px;
   border-radius:999px;
-  border:1px solid var(--outline);
-  background:var(--surface);
+  border:1px solid color-mix(in srgb,var(--primary) 30%, var(--outline));
+  background:color-mix(in srgb,var(--primary) 12%, var(--surface));
   color:var(--text);
 }
 
@@ -198,7 +198,7 @@ a:hover { text-decoration:underline; }
 }
 
 .tab-labels label:hover { background:var(--surface-variant); }
-.tab-labels label:active { background:#e8eaed; }
+.tab-labels label:active { background:color-mix(in srgb, var(--surface) 82%, var(--text) 6%); }
 .tab-labels label::after {
   content:"";
   position:absolute;
@@ -354,8 +354,8 @@ h2.section, h3.section {
   transition:background .15s,border-color .15s,box-shadow .15s;
 }
 
-.btn:hover { background:var(--surface-variant); border-color:#c6c6c6; }
-.btn:active { background:#e8eaed; }
+.btn:hover { background:var(--surface-variant); border-color:color-mix(in srgb,var(--outline) 60%, var(--text) 8%); }
+.btn:active { background:color-mix(in srgb, var(--surface) 82%, var(--text) 6%); }
 .btn:focus-visible { outline:2px solid var(--focus); outline-offset:3px; }
 
 hr { border:none; border-top:1px solid var(--outline); margin:var(--space-3) 0; }
