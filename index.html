@@ -5,8 +5,398 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>사진갤</title>
   <meta name="description" content="9월~12월 촬영 사진과 발표/보고서 아카이브" />
-  <link rel="stylesheet" href="style.css" />
-  <script defer src="script.js"></script>
+  <style>
+    /* Google Search-inspired minimal design focused on clarity and speed */
+    :root {
+      --radius-lg:16px;
+      --radius-md:12px;
+      --radius-sm:10px;
+      --focus:#1a73e8;
+      --space-1:8px;
+      --space-2:12px;
+      --space-3:16px;
+      --space-4:24px;
+      color-scheme:light;
+    }
+
+    :root[data-theme="light"] {
+      --bg:#f8f9fa;
+      --surface:#fff;
+      --surface-variant:#f1f3f4;
+      --text:#202124;
+      --text-muted:#5f6368;
+      --outline:#dadce0;
+      --primary:#1a73e8;
+      --primary-soft:color-mix(in srgb, var(--primary) 10%, transparent);
+      --shadow:0 4px 14px rgba(60,64,67,.08);
+      color-scheme:light;
+    }
+
+    :root[data-theme="dark"] {
+      --bg:#0f1115;
+      --surface:#16181d;
+      --surface-variant:#1f2229;
+      --text:#e8eaed;
+      --text-muted:#afb4bc;
+      --outline:#2a2f38;
+      --primary:#8ab4f8;
+      --primary-soft:color-mix(in srgb, var(--primary) 12%, transparent);
+      --shadow:0 12px 34px rgba(0,0,0,.5);
+      color-scheme:dark;
+    }
+
+    * { box-sizing:border-box; }
+    html, body { height:100%; }
+    body {
+      margin:0;
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.55;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .wrap {
+      max-width:980px;
+      margin:0 auto;
+      padding:var(--space-4);
+    }
+
+    header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:24px 0 12px;
+    }
+
+    .brand {
+      font-weight:700;
+      font-size:26px;
+      letter-spacing:.2px;
+      color:var(--primary);
+    }
+
+    .header-actions {
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    .theme-toggle {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--outline);
+      background:var(--surface);
+      color:var(--text);
+      cursor:pointer;
+      font-weight:700;
+      font-size:14px;
+      transition:background .15s ease,border-color .15s ease,box-shadow .15s ease;
+    }
+
+    .theme-toggle:hover { background:var(--surface-variant); }
+    .theme-toggle:active { background:color-mix(in srgb, var(--surface) 80%, var(--text) 5%); }
+    .theme-toggle:focus-visible { outline:2px solid var(--focus); outline-offset:3px; }
+    .theme-icon { font-size:16px; }
+
+    a { color:var(--primary); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+
+    .tabs {
+      border:1px solid var(--outline);
+      border-radius:calc(var(--radius-lg) + 2px);
+      background:var(--surface);
+      padding:var(--space-2);
+      box-shadow:var(--shadow);
+    }
+
+    .principles {
+      margin:0 0 var(--space-3);
+      padding:var(--space-3);
+      border:1px solid var(--outline);
+      border-radius:var(--radius-lg);
+      background:var(--surface);
+      box-shadow:var(--shadow);
+    }
+
+    .principles-header {
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .principles h2 {
+      margin:0;
+      font-size:20px;
+      font-weight:800;
+    }
+
+    .applied-note {
+      display:flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:10px;
+      background:var(--surface-variant);
+      color:var(--text);
+      font-weight:700;
+    }
+
+    .principle-list {
+      margin:var(--space-2) 0 0;
+      padding-left:18px;
+      display:grid;
+      gap:10px;
+    }
+
+    .principle-item {
+      list-style:decimal;
+      padding:12px 12px 12px 10px;
+      border:1px solid var(--outline);
+      border-radius:12px;
+      background:var(--surface-variant);
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .principle-text { flex:1; font-weight:700; color:var(--text); }
+    .principle-status { white-space:nowrap; color:var(--text-muted); font-weight:700; }
+    .principle-status .status-pill {
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid color-mix(in srgb,var(--primary) 30%, var(--outline));
+      background:color-mix(in srgb,var(--primary) 12%, var(--surface));
+      color:var(--text);
+    }
+
+    .tabs input[type="radio"] { position:absolute; opacity:0; pointer-events:none; }
+
+    .tab-labels {
+      display:flex;
+      gap:var(--space-1);
+      flex-wrap:wrap;
+      padding:4px;
+      border-radius:var(--radius-md);
+    }
+
+    .tab-labels label {
+      position:relative;
+      display:flex;
+      align-items:center;
+      padding:12px 14px;
+      min-height:44px;
+      border-radius:var(--radius-md);
+      cursor:pointer;
+      font-weight:700;
+      font-size:14px;
+      letter-spacing:.2px;
+      color:var(--text-muted);
+      transition:background .15s ease,color .15s ease;
+    }
+
+    .tab-labels label:hover { background:var(--surface-variant); }
+    .tab-labels label:active { background:color-mix(in srgb, var(--surface) 82%, var(--text) 6%); }
+    .tab-labels label::after {
+      content:"";
+      position:absolute;
+      left:14px;
+      right:14px;
+      bottom:6px;
+      height:3px;
+      border-radius:3px;
+      opacity:0;
+      transform:scaleX(.4);
+      background:var(--primary);
+      transition:opacity .18s,transform .18s;
+    }
+
+    #tab-gallery:checked ~ .tab-labels label[for="tab-gallery"],
+    #tab-docs:checked   ~ .tab-labels label[for="tab-docs"] {
+      color:var(--text);
+      background:var(--primary-soft);
+    }
+
+    #tab-gallery:checked ~ .tab-labels label[for="tab-gallery"]::after,
+    #tab-docs:checked   ~ .tab-labels label[for="tab-docs"]::after {
+      opacity:1;
+      transform:scaleX(1);
+    }
+
+    .tab-panel { display:none; margin-top:var(--space-3); }
+    #tab-gallery:checked ~ .tab-panels #panel-gallery { display:block; }
+    #tab-docs:checked   ~ .tab-panels #panel-docs { display:block; }
+
+    .subfilters {
+      display:flex;
+      gap:var(--space-1);
+      flex-wrap:wrap;
+      margin:8px 0 var(--space-3);
+    }
+
+    .subfilters label {
+      position:relative;
+      display:inline-flex;
+      align-items:center;
+      padding:10px 12px;
+      min-height:38px;
+      border-radius:var(--radius-sm);
+      cursor:pointer;
+      border:1px solid var(--outline);
+      color:var(--text-muted);
+      font-weight:600;
+      transition:background .15s,color .15s,border-color .15s;
+      background:var(--surface);
+    }
+
+    .subfilters label:hover { background:var(--surface-variant); }
+    .subfilters input[type="radio"] { position:absolute; opacity:0; pointer-events:none; }
+
+    #m9:checked  ~ .subfilters label[for="m9"],
+    #m10:checked ~ .subfilters label[for="m10"],
+    #m11:checked ~ .subfilters label[for="m11"],
+    #m12:checked ~ .subfilters label[for="m12"] {
+      color:var(--text);
+      border-color:color-mix(in srgb,var(--primary) 40%,var(--outline));
+      background:var(--primary-soft);
+    }
+
+    .gallery {
+      display:none;
+      grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+      gap:var(--space-2);
+    }
+
+    #m9:checked  ~ .gallery[data-month="9"],
+    #m10:checked ~ .gallery[data-month="10"],
+    #m11:checked ~ .gallery[data-month="11"],
+    #m12:checked ~ .gallery[data-month="12"] { display:grid; }
+
+    figure {
+      margin:0;
+      border:1px solid var(--outline);
+      border-radius:var(--radius-lg);
+      overflow:hidden;
+      background:var(--surface);
+      transition:transform .12s ease,box-shadow .12s ease;
+    }
+
+    figure:hover {
+      transform:translateY(-1px);
+      box-shadow:var(--shadow);
+    }
+
+    figure img { display:block; width:100%; height:200px; object-fit:cover; }
+
+    figcaption {
+      display:flex;
+      justify-content:space-between;
+      gap:var(--space-2);
+      padding:10px 12px;
+      font-size:14px;
+      color:var(--text-muted);
+    }
+
+    .badge {
+      font-size:12px;
+      padding:2px 8px;
+      border:1px solid var(--outline);
+      border-radius:999px;
+      color:var(--text);
+      background:var(--surface-variant);
+    }
+
+    h2.section, h3.section {
+      margin:var(--space-3) 0 var(--space-2);
+      font-weight:800;
+      font-size:22px;
+      letter-spacing:.1px;
+    }
+
+    .cards {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(260px,1fr));
+      gap:var(--space-2);
+    }
+
+    .card {
+      border:1px solid var(--outline);
+      border-radius:var(--radius-lg);
+      background:var(--surface);
+      padding:var(--space-3);
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      transition:box-shadow .12s ease,transform .12s ease;
+    }
+
+    .card:hover { box-shadow:var(--shadow); transform:translateY(-1px); }
+
+    .card h4 { margin:0; font-size:16px; font-weight:800; color:var(--text); }
+    .meta { font-size:13px; color:var(--text-muted); margin-bottom:4px; }
+
+    .btns { display:flex; gap:8px; flex-wrap:wrap; margin-top:6px; }
+
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:40px;
+      height:40px;
+      border:1px solid var(--outline);
+      border-radius:12px;
+      background:var(--surface);
+      color:var(--text);
+      font-size:18px;
+      text-decoration:none;
+      transition:background .15s,border-color .15s,box-shadow .15s;
+    }
+
+    .btn:hover { background:var(--surface-variant); border-color:color-mix(in srgb,var(--outline) 60%, var(--text) 8%); }
+    .btn:active { background:color-mix(in srgb, var(--surface) 82%, var(--text) 6%); }
+    .btn:focus-visible { outline:2px solid var(--focus); outline-offset:3px; }
+
+    hr { border:none; border-top:1px solid var(--outline); margin:var(--space-3) 0; }
+
+    footer {
+      margin:28px 0 8px;
+      font-size:12px;
+      color:var(--text-muted);
+      text-align:center;
+    }
+
+    .sr-only {
+      position:absolute;
+      width:1px;
+      height:1px;
+      padding:0;
+      margin:-1px;
+      overflow:hidden;
+      clip:rect(0,0,0,0);
+      white-space:nowrap;
+      border:0;
+    }
+
+    @media (max-width:600px) {
+      .wrap { padding:var(--space-3); }
+      .cards { grid-template-columns:1fr; }
+      .gallery { grid-template-columns:1fr; }
+      h2.section, h3.section { font-size:20px; }
+      .brand { font-size:22px; }
+      header { flex-direction:column; align-items:flex-start; }
+      .header-actions { width:100%; justify-content:flex-start; }
+    }
+  </style>
 </head>
 <body>
   <div class="wrap">
@@ -159,5 +549,96 @@
       © 2025 사진갤 · 모든 사진과 문서의 저작권은 제작자에게 있습니다.
     </footer>
   </div>
+
+  <script>
+    const syncSelection = (inputs, labels) => {
+      labels.forEach((label) => {
+        const isChecked = document.getElementById(label.htmlFor)?.checked;
+        label.setAttribute("aria-selected", isChecked ? "true" : "false");
+        label.tabIndex = isChecked ? 0 : -1;
+      });
+    };
+
+    const enableArrowNavigation = (inputs, labels) => {
+      const total = inputs.length;
+
+      labels.forEach((label) => {
+        label.addEventListener("keydown", (event) => {
+          const currentId = label.htmlFor;
+          const index = inputs.findIndex((input) => input.id === currentId);
+          if (index === -1) return;
+
+          const move = event.key === "ArrowRight" || event.key === "ArrowDown"
+            ? 1
+            : event.key === "ArrowLeft" || event.key === "ArrowUp"
+              ? -1
+              : 0;
+
+          if (!move) return;
+          event.preventDefault();
+
+          const nextIndex = (index + move + total) % total;
+          const nextInput = inputs[nextIndex];
+          nextInput.checked = true;
+          nextInput.dispatchEvent(new Event("change", { bubbles: true }));
+          document.querySelector(`label[for="${nextInput.id}"]`)?.focus();
+        });
+      });
+    };
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const tabInputs = Array.from(document.querySelectorAll("input[name='tabs']"));
+      const tabLabels = Array.from(document.querySelectorAll(".tab-labels label"));
+      const monthInputs = Array.from(document.querySelectorAll("input[name='month']"));
+      const monthLabels = Array.from(document.querySelectorAll(".subfilters label"));
+      const themeToggle = document.querySelector(".theme-toggle");
+      const themeLabel = document.querySelector(".theme-label");
+      const themeIcon = document.querySelector(".theme-icon");
+      const principleItems = Array.from(document.querySelectorAll(".principle-item"));
+      const appliedNote = document.querySelector(".applied-note");
+
+      const syncTabs = () => syncSelection(tabInputs, tabLabels);
+      const syncMonths = () => syncSelection(monthInputs, monthLabels);
+
+      const THEME_KEY = "preferred-theme";
+      const applyTheme = (mode) => {
+        const root = document.documentElement;
+        const next = mode || "light";
+        root.setAttribute("data-theme", next);
+        localStorage.setItem(THEME_KEY, next);
+        const isDark = next === "dark";
+        themeToggle?.setAttribute("aria-pressed", isDark ? "true" : "false");
+        themeToggle?.setAttribute("aria-label", isDark ? "라이트 모드로 전환" : "다크 모드로 전환");
+        if (themeLabel) themeLabel.textContent = isDark ? "다크" : "라이트";
+        if (themeIcon) themeIcon.textContent = isDark ? "🌙" : "🌞";
+      };
+
+      const detectInitialTheme = () => {
+        const stored = localStorage.getItem(THEME_KEY);
+        if (stored === "light" || stored === "dark") return stored;
+        return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+      };
+
+      tabInputs.forEach((input) => input.addEventListener("change", syncTabs));
+      monthInputs.forEach((input) => input.addEventListener("change", syncMonths));
+
+      themeToggle?.addEventListener("click", () => {
+        const current = document.documentElement.getAttribute("data-theme") || "light";
+        applyTheme(current === "light" ? "dark" : "light");
+      });
+
+      enableArrowNavigation(tabInputs, tabLabels);
+      enableArrowNavigation(monthInputs, monthLabels);
+
+      if (appliedNote && principleItems.length) {
+        const appliedCount = document.querySelectorAll(".status-pill[data-status='applied']").length;
+        appliedNote.textContent = `✔ ${appliedCount}/${principleItems.length} 디자인 원칙 적용됨`;
+      }
+
+      syncTabs();
+      syncMonths();
+      applyTheme(detectInitialTheme());
+    });
+  </script>
 </body>
 </html>
